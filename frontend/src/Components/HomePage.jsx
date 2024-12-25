@@ -56,6 +56,7 @@ function HomePage() {
     // Connect to WebSocket server
     temp.connect(headers, onConnect, onError);
   };
+  
 
   // Function to get a specific cookie by name
   function getCookie(name) {
@@ -63,6 +64,27 @@ function HomePage() {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
       return parts.pop().split(";").shift();
+    }
+  }
+  async function handleDelete(currentChat, token) {
+    console.log(token, currentChat.id + "nbfdfjhsd");
+  
+    try {
+      const response = await fetch(`http://localhost:8080/api/chats/delete/${currentChat.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`, // Include JWT in the Authorization header
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete chat: " + response.statusText);
+      }
+  
+      console.log("Chat deleted successfully", response);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting chat:", error);
     }
   }
 
@@ -75,7 +97,7 @@ function HomePage() {
   const onConnect = () => {
     setIsConnected(true);
 
-    // Subscribe to the current chat messages based on the chat type
+    // Subscribe to the  messages based on the chat type
     if (stompClient && currentChat) {
       if (currentChat.isGroupChat) {
         // Subscribe to group chat messages
@@ -110,6 +132,7 @@ function HomePage() {
       };
     }
   }, [isConnected, stompClient, currentChat]);
+
 
   // Effect to handle sending a new message via WebSocket
   useEffect(() => {
@@ -229,6 +252,7 @@ function HomePage() {
       navigate("/signin");
     }
   }, [auth.reqUser]);
+  console.log(currentChat?.id+"rohit")
   return (
 
     <div className="relative">
@@ -332,6 +356,9 @@ function HomePage() {
                         key={i}
                         isReqUserMessage={item?.user?.id !== auth?.reqUser?.id}
                         content={item.content}
+                        fileType={item.fileType}
+                        id = {item.id}
+                        token= {token}
                         timestamp={item.timestamp}
                         profilePic={item?.user?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp?b=1&s=170667a&w=0&k=20&c=wpJ0QJYXdbLx24H5LK08xSgiQ3zNkCAD2W3F74qlUL0="}
                       />
@@ -342,8 +369,11 @@ function HomePage() {
               {/* Footer Section */}
               <div className="footer bg-[#f0f2f5] absolute bottom-0 w-full py-3 text-2xl">
                 <div className="flex justify-between items-center px-5 relative">
-                  <BsEmojiSmile className="cursor-pointer" />
-                  <ImAttachment />
+                  
+                <button onClick={() => handleDelete(currentChat, token)}>Clear</button>
+                  
+                  //problem
+                 <button><ImAttachment /></button> 
 
                   <input
                     className="py-2 outline-none border-none bg-white pl-4 rounded-md w-[85%]"
