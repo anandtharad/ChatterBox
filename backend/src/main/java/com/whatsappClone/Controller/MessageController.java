@@ -89,8 +89,8 @@ public class MessageController {
         message.setChat(this.messageService.findChatById(chatId));
 
         Message savedMessage = this.messageService.saveMessage(message);
-        String generatedContent = "localhost:8080/api/messages/download/" + savedMessage.getId();
-        savedMessage.setContent(generatedContent);
+//        String generatedContent = "localhost:8080/api/messages/download/" + savedMessage.getId();
+        savedMessage.setContent(file.getOriginalFilename());
 
         // Save the updated message
         savedMessage = this.messageService.saveMessage(savedMessage);

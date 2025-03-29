@@ -87,7 +87,65 @@ function HomePage() {
       console.error("Error deleting chat:", error);
     }
   }
+  async function handleUpload(currentChat, token, file) {
+    console.log(token, currentChat.id + "nbfdfjhsd");
 
+    try {
+      // Create a FormData object to handle file uploads
+      const formData = new FormData();
+      formData.append("chatId", currentChat.id); // Add chatId to the formData
+      formData.append("file", file); // Add the file to the formData
+
+      const response = await fetch(`http://localhost:8080/api/messages/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // Include JWT in the Authorization header
+        },
+        body: formData, // Send the FormData as the request body
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload file: " + response.statusText);
+      }
+
+      console.log("File uploaded successfully", response);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  }
+
+
+  function UploadButton({ currentChat, token }) {
+    const fileInputRef = useRef(null);
+
+    const handleUploadClick = () => {
+      // Programmatically click the hidden file input
+      fileInputRef.current.click();
+    };
+
+    const handleFileChange = async (event) => {
+      const file = event.target.files[0]; // Get the selected file
+      if (file) {
+        await handleUpload(currentChat, token, file); // Call handleUpload function
+      }
+    };
+
+    return (
+        <>
+          <button onClick={handleUploadClick}>
+            <ImAttachment />
+          </button>
+          {/* Hidden file input */}
+          <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+          />
+        </>
+    );
+  }
   // Callback for WebSocket connection error
   const onError = (error) => {
     console.log("on error ", error);
@@ -298,17 +356,17 @@ function HomePage() {
          {/* Default WhatsApp Page */}
          {!currentChat?.id && (
             <div className="w-[70%] flex flex-col items-center justify-center h-full">
-              <div className="max-w-[70%] text-center">
-                <img
-                  className="ml-11 lg:w-[75%] "
-                  src="https://cdn.pixabay.com/photo/2015/08/03/13/58/whatsapp-873316_640.png"
-                  alt="whatsapp-icon"
-                />
-                <h1 className="text-4xl text-gray-600">WhatsApp Web</h1>
-                <p className="my-9">
-                  Send and receive messages with WhatsApp and save time.
-                </p>
-              </div>
+              {/*<div className="max-w-[70%] text-center">*/}
+              {/*  <img*/}
+              {/*    className="ml-11 lg:w-[75%] "*/}
+              {/*    src="https://cdn.pixabay.com/photo/2015/08/03/13/58/whatsapp-873316_640.png"*/}
+              {/*    alt="whatsapp-icon"*/}
+              {/*  />*/}
+              {/*  <h1 className="text-4xl text-gray-600">WhatsApp Web</h1>*/}
+              {/*  <p className="my-9">*/}
+              {/*    Send and receive messages with WhatsApp and save time.*/}
+              {/*  </p>*/}
+              {/*</div>*/}
             </div>
           )}
 
@@ -340,10 +398,6 @@ function HomePage() {
                         : currentChat.users[1].name}
                     </p>
                   </div>
-                  <div className="flex py-3 space-x-4 items-center px-3">
-                    <AiOutlineSearch />
-                    <BsThreeDotsVertical />
-                  </div>
                 </div>
               </div>
 
@@ -372,8 +426,9 @@ function HomePage() {
                   
                 <button onClick={() => handleDelete(currentChat, token)}>Clear</button>
                   
-                  //problem
-                 <button><ImAttachment /></button> 
+                 {/* problem with attachment*/}
+                  <UploadButton currentChat={currentChat} token={token} />
+
 
                   <input
                     className="py-2 outline-none border-none bg-white pl-4 rounded-md w-[85%]"
@@ -388,7 +443,6 @@ function HomePage() {
                       }
                     }}
                   />
-                  <BsMicFill />
                 </div>
               </div>
             </div>

@@ -56,23 +56,27 @@ const MessageCard = ({
         />
       )}
       <div
-        className={`max-w-xs px-4 py-2 rounded-lg ${
-          isReqUserMessage
-            ? "bg-blue-500 text-white"
-            : "bg-gray-200 text-black"
-        }`}
+          className={`max-w-xs px-4 py-2 rounded-lg ${
+              isReqUserMessage
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-black"
+          }`}
       >
-        <p>{content}</p>
-        {fileType && (
-          <button
-            onClick={handleCheck}
-            className="text-blue-500 underline mt-2 text-sm"
-          >
-            Download File
-          </button>
-        )}
+        <p>
+          {fileType ? (
+              <button
+                  onClick={handleCheck}
+                  className="text-black-800 underline mt-2 text-sm"
+              >
+                {content}
+              </button>
+          ) : (
+              content
+          )}
+        </p>
+
         {timestamp && (
-          <span className="text-xs text-gray-600 mt-1">
+            <span className="text-xs text-gray-600 mt-1">
             {new Date(timestamp).toLocaleTimeString()}
           </span>
         )}

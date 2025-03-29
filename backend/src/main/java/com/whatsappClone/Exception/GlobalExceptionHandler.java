@@ -43,13 +43,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorDetail> noHandlerFoundExceptionHandler(NoHandlerFoundException e, WebRequest request) {
         ErrorDetail err = new ErrorDetail(e.getMessage(), request.getDescription(false), LocalDateTime.now());
-        return new ResponseEntity<>(err, HttpStatus.NOT_FOUND); // You might want to use a different status code
+        return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetail> otherExceptionHandler(Exception e, WebRequest request) {
         ErrorDetail err = new ErrorDetail(e.getMessage(), request.getDescription(false), LocalDateTime.now());
-        return new ResponseEntity<>(err, HttpStatus.INTERNAL_SERVER_ERROR); // You might want to use a different status
-                                                                            // code
+        return new ResponseEntity<>(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
